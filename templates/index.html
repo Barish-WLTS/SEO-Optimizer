@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Article Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="max-w-full mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">SEO Article Generator</h2>
+        
+        <form method="POST" class="flex flex-col gap-4">
+            <label class="font-semibold">Gemini API Key:</label>
+            <input type="password" name="gemini_api_key" required class="p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none">
+
+            <label class="font-semibold">Word Count:</label>
+            <select name="word_count" class="p-3 border border-gray-300 rounded-md bg-gray-100">
+                {% for count in [300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200] %}
+                    <option value="{{ count }}">{{ count }}</option>
+                {% endfor %}
+            </select>
+
+            <label class="font-semibold">Dialect:</label>
+            <select name="dialect" class="p-3 border border-gray-300 rounded-md bg-gray-100">
+                {% for dialect in ["American", "British", "Canadian", "Australian"] %}
+                    <option value="{{ dialect }}">{{ dialect }}</option>
+                {% endfor %}
+            </select>
+
+            <label class="font-semibold">Topic:</label>
+            <input type="text" name="topic" required class="p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none">
+
+            <label class="font-semibold">Keywords and URLs:</label>
+                <textarea name="keywords_text" rows="5" required 
+                    class="p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none w-full">
+                </textarea>
+
+
+            <!-- Add Context -->
+            <label class="font-semibold">Add Context:</label>
+            <div class="flex gap-4">
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="add_context" value="Yes" onclick="toggleField('contextField', true)" class="w-5 h-5 text-blue-500">
+                    Yes
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="add_context" value="No" onclick="toggleField('contextField', false)" class="w-5 h-5 text-blue-500" checked>
+                    No
+                </label>
+            </div>
+
+            <div id="contextField" class="hidden">
+                <textarea name="context" rows="5" class="px-20 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+            </div>
+
+            <!-- Remove Keywords -->
+            <label class="font-semibold">Remove Keywords:</label>
+            <div class="flex gap-4">
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="remove_keywords" value="Yes" onclick="toggleField('removeKeywordsField', true)" class="w-5 h-5 text-blue-500">
+                    Yes
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="remove_keywords" value="No" onclick="toggleField('removeKeywordsField', false)" class="w-5 h-5 text-blue-500" checked>
+                    No
+                </label>
+            </div>
+
+            <div id="removeKeywordsField" class="hidden">
+                <!-- <label class="font-semibold">Enter Keywords to Remove:</label> -->
+                <textarea name="remove_keywords_text" rows="5" class="px-20 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+            </div>
+
+            <!-- Add Bulletpoints -->
+            <label class="font-semibold">Add Bulletpoints:</label>
+            <div class="flex gap-4">
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="bulletpoints" value="Yes" onclick="toggleField('bulletpointsField', true)" class="w-5 h-5 text-blue-500">
+                    Yes
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="bulletpoints" value="No" onclick="toggleField('bulletpointsField', false)" class="w-5 h-5 text-blue-500" checked>
+                    No
+                </label>
+            </div>
+
+            <div id="bulletpointsField" class="hidden">
+                <!-- <label class="font-semibold">Bulletpoints Details:</label> -->
+                <textarea name="bulletpoints_text" rows="5" class="px-20 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+            </div>
+
+            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-md transition">
+                Generate Article
+            </button>
+        </form>
+
+        {% if error_message %}
+            <p class="text-red-500 mt-4 p-3 bg-red-100 border border-red-300 rounded-md">{{ error_message }}</p>
+        {% endif %}
+
+        {% if article_text %}
+            <div class="mt-6 p-5 border border-gray-300 rounded-md bg-white shadow">
+                <h3 class="text-xl font-bold text-gray-800">Generated Article:</h3>
+                <p>{{ article_text | safe }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleField(fieldId, show) {
+            document.getElementById(fieldId).classList.toggle('hidden', !show);
+        }
+    </script>
+</body>
+</html>
