@@ -10,9 +10,23 @@
         .gradient-bg {
             background: linear-gradient(135deg, #6B46C1 0%, #4299E1 100%);
         }
+        /* Ensure footer stays at bottom */
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1 0 auto;
+        }
+        footer {
+            flex-shrink: 0;
+        }
     </style>
 </head>
-<body class="min-h-screen bg-gray-50 font-sans">
+<body class="min-h-screen bg-gray-50 font-sans flex flex-col">
     <!-- Navigation Header -->
     <header class="gradient-bg text-white shadow-lg">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -43,7 +57,7 @@
     </div>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+    <main class="container mx-auto px-4 py-8 flex-1">
         <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">EXIF Editor</h1>
 
         <div class="flex flex-col lg:flex-row gap-6">
@@ -158,6 +172,13 @@
         </div>
     </main>
 
+    <!-- Footer fixed to bottom -->
+    <footer class="bg-gray-800 text-white py-8 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p>© <span id="year"></span> EXIF Editor. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script>
         // Mobile menu toggle
         document.getElementById('mobileMenuButton').addEventListener('click', function() {
@@ -167,6 +188,9 @@
         document.getElementById('closeMenu').addEventListener('click', function() {
             document.getElementById('mobileMenu').classList.add('hidden');
         });
+        
+        // Add current year to footer
+        document.getElementById("year").textContent = new Date().getFullYear();
     </script>
 </body>
 </html>

@@ -9,29 +9,36 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .gradient-bg {
             background: linear-gradient(135deg, #6B46C1 0%, #4299E1 100%);
         }
-        .article-container h1 { /* Replace .article-container */
-  font-size: 2em;  /* Adjust size as needed */
-  font-weight: bold;
-  margin-bottom: 0.5em; /* Space after h1 */
-}
-
-.article-container h2 {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-bottom: 0.5em;
-}
-
-.article-container p {
-  margin-bottom: 1em; /* Space between paragraphs */
-  line-height: 1.5; /* Add line-height for readability */
-}
+        .article-container h1 {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 0.5em;
+        }
+        .article-container h2 {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 0.5em;
+        }
+        .article-container p {
+            margin-bottom: 1em;
+            line-height: 1.5;
+        }
+        main {
+            flex: 1;
+        }
+        footer {
+            flex-shrink: 0;
+        }
     </style>
 </head>
-<body class="min-h-screen bg-gray-50">
+<body class="bg-gray-50">
     <!-- Navigation -->
     <header class="gradient-bg text-white shadow-lg">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -49,7 +56,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 sm:px-6 py-8">
+    <main class="container mx-auto px-4 sm:px-6 py-8 flex-1">
         <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
             <div class="p-6 sm:p-8">
                 <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">SEO Article Generator</h2>
@@ -152,26 +159,26 @@
                 {% endif %}
 
                 {% if sections %}
-    <div class="mt-8 p-6 border border-gray-200 rounded-md bg-gray-50 shadow-inner">
-        <h3 class="text-xl font-bold text-gray-800 mb-4">Generated Article:</h3>
-        <div class="article-container">
-            {% if sections %}
-                {% for section in sections %}
-                    <div class="article-section">
-                        <h2>{{ section.title }}</h2>
-                        <div class="article-content">
-                            {% if section.html %}
-                                {{ section.content|safe }}
-                            {% else %}
-                                <p>{{ section.content }}</p>
+                    <div class="mt-8 p-6 border border-gray-200 rounded-md bg-gray-50 shadow-inner">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Generated Article:</h3>
+                        <div class="article-container">
+                            {% if sections %}
+                                {% for section in sections %}
+                                    <div class="article-section">
+                                        <h2>{{ section.title }}</h2>
+                                        <div class="article-content">
+                                            {% if section.html %}
+                                                {{ section.content|safe }}
+                                            {% else %}
+                                                <p>{{ section.content }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
                             {% endif %}
                         </div>
                     </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-    </div>
-{% endif %}
+                {% endif %}
             </div>
         </div>
     </main>
@@ -189,6 +196,13 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p>© <span id="year"></span> SEO ArticleGen. All rights reserved.</p>
+        </div>
+    </footer>
+
     <script>
         // Mobile menu toggle
         document.getElementById('mobileMenuButton').addEventListener('click', function() {
@@ -202,6 +216,9 @@
         function toggleField(fieldId, show) {
             document.getElementById(fieldId).classList.toggle('hidden', !show);
         }
+
+        // Set current year in footer
+        document.getElementById("year").textContent = new Date().getFullYear();
     </script>
 </body>
 </html>

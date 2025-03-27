@@ -59,7 +59,7 @@
 
     <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-6 text-center">
-            <p>© 2023 SEO-Optimizer. All rights reserved.</p>
+            <p>© <span id="year"></span> SEO-Optimizer. All rights reserved.</p>
         </div>
     </footer>
 
@@ -85,6 +85,7 @@
         document.getElementById('closeMenu').addEventListener('click', function() {
             document.getElementById('mobileMenu').classList.add('hidden');
         });
+        document.getElementById("year").textContent = new Date().getFullYear();
     </script>
 </body>
 </html>
