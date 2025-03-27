@@ -120,14 +120,21 @@ def write_exif_tags_piexif(file_bytes, orig_filename, **kwargs):
             if kwargs.get('latitude') is not None and kwargs.get('longitude') is not None:
                 latitude = float(kwargs['latitude'])
                 longitude = float(kwargs['longitude'])
-
+                
                 # Convert to EXIF GPS format (degrees, minutes, seconds as tuples)
                 def decimal_to_dms(decimal):
                     degrees = int(decimal)
-                    minutes = int((decimal - degrees) * 60)
-                    seconds = int(
-                        ((decimal - degrees) * 60 - minutes) * 60 * 100)
-                    return [(degrees, 1), (minutes, 1), (seconds, 100)]
+                    remainder = abs(decimal - degrees) * 60
+                    minutes = int(remainder)
+                    seconds = (remainder - minutes) * 60
+                    
+                    # Convert seconds to a fraction with a large denominator (1,000,000 for microsecond precision)
+                    seconds_numerator = int(round(seconds * 1_000_000))  # Avoid floating-point inaccuracies
+                    return [
+                        (degrees, 1),            # Degrees (exact)
+                        (minutes, 1),            # Minutes (exact)
+                        (seconds_numerator, 1_000_000)  # Seconds (microsecond precision)
+                    ]
 
                 exif_dict['GPS'][piexif.GPSIFD.GPSLatitude] = decimal_to_dms(
                     abs(latitude))
