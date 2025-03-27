@@ -3,114 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO Article Generator</title>
+    <title>SEO-Optimizer | Boost Your Online Presence</title>
+    <meta name="description" content="Professional SEO optimization tools to improve your website's search engine rankings">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hero-text {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #6B46C1 0%, #4299E1 100%);
+        }
+    </style>
 </head>
-<body>
-    <div class="max-w-full mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">SEO Article Generator</h2>
-        
-        <form method="POST" class="flex flex-col gap-4">
-            <label class="font-semibold">Gemini API Key:</label>
-            <input type="password" name="gemini_api_key" required class="p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none">
-
-            <label class="font-semibold">Word Count:</label>
-            <select name="word_count" class="p-3 border border-gray-300 rounded-md bg-gray-100">
-                {% for count in [300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200] %}
-                    <option value="{{ count }}">{{ count }}</option>
-                {% endfor %}
-            </select>
-
-            <label class="font-semibold">Dialect:</label>
-            <select name="dialect" class="p-3 border border-gray-300 rounded-md bg-gray-100">
-                {% for dialect in ["American", "British", "Canadian", "Australian"] %}
-                    <option value="{{ dialect }}">{{ dialect }}</option>
-                {% endfor %}
-            </select>
-
-            <label class="font-semibold">Topic:</label>
-            <input type="text" name="topic" required class="p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none">
-
-            <label class="font-semibold">Keywords and URLs:</label>
-                <textarea name="keywords_text" rows="5" required 
-                    class="p-3 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none w-full">
-                </textarea>
-
-
-            <!-- Add Context -->
-            <label class="font-semibold">Add Context:</label>
-            <div class="flex gap-4">
-                <label class="flex items-center gap-2">
-                    <input type="radio" name="add_context" value="Yes" onclick="toggleField('contextField', true)" class="w-5 h-5 text-blue-500">
-                    Yes
-                </label>
-                <label class="flex items-center gap-2">
-                    <input type="radio" name="add_context" value="No" onclick="toggleField('contextField', false)" class="w-5 h-5 text-blue-500" checked>
-                    No
-                </label>
+<body class="min-h-screen bg-gray-50">
+    <header class="gradient-bg text-white shadow-lg">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold">SEO<span class="text-yellow-300">Optimizer</span></div>
+            <div class="hidden md:flex space-x-8">
+                <a href="/article" class="text-white hover:text-yellow-300 font-semibold transition duration-300 transform hover:scale-105">SEO-Optimizer</a>
+                <a href="/exif-editor" class="text-white hover:text-yellow-300 font-semibold transition duration-300 transform hover:scale-105">EXIF Editor</a>
             </div>
-
-            <div id="contextField" class="hidden">
-                <textarea name="context" rows="5" class="px-20 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
-            </div>
-
-            <!-- Remove Keywords -->
-            <label class="font-semibold">Remove Keywords:</label>
-            <div class="flex gap-4">
-                <label class="flex items-center gap-2">
-                    <input type="radio" name="remove_keywords" value="Yes" onclick="toggleField('removeKeywordsField', true)" class="w-5 h-5 text-blue-500">
-                    Yes
-                </label>
-                <label class="flex items-center gap-2">
-                    <input type="radio" name="remove_keywords" value="No" onclick="toggleField('removeKeywordsField', false)" class="w-5 h-5 text-blue-500" checked>
-                    No
-                </label>
-            </div>
-
-            <div id="removeKeywordsField" class="hidden">
-                <!-- <label class="font-semibold">Enter Keywords to Remove:</label> -->
-                <textarea name="remove_keywords_text" rows="5" class="px-20 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
-            </div>
-
-            <!-- Add Bulletpoints -->
-            <label class="font-semibold">Add Bulletpoints:</label>
-            <div class="flex gap-4">
-                <label class="flex items-center gap-2">
-                    <input type="radio" name="bulletpoints" value="Yes" onclick="toggleField('bulletpointsField', true)" class="w-5 h-5 text-blue-500">
-                    Yes
-                </label>
-                <label class="flex items-center gap-2">
-                    <input type="radio" name="bulletpoints" value="No" onclick="toggleField('bulletpointsField', false)" class="w-5 h-5 text-blue-500" checked>
-                    No
-                </label>
-            </div>
-
-            <div id="bulletpointsField" class="hidden">
-                <!-- <label class="font-semibold">Bulletpoints Details:</label> -->
-                <textarea name="bulletpoints_text" rows="5" class="px-20 border border-gray-300 rounded-md bg-gray-100 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
-            </div>
-
-            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-md transition">
-                Generate Article
+            <button class="md:hidden focus:outline-none">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
             </button>
-        </form>
+        </nav>
+    </header>
 
-        {% if error_message %}
-            <p class="text-red-500 mt-4 p-3 bg-red-100 border border-red-300 rounded-md">{{ error_message }}</p>
-        {% endif %}
-
-        {% if article_text %}
-            <div class="mt-6 p-5 border border-gray-300 rounded-md bg-white shadow">
-                <h3 class="text-xl font-bold text-gray-800">Generated Article:</h3>
-                <p>{{ article_text | safe }}</p>
+    <main class="container mx-auto px-6 py-16 md:py-24">
+        <section class="text-center">
+            <h1 class="hero-text text-4xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-8 leading-tight">
+                Welcome To The <span class="bg-clip-text text-transparent gradient-bg">SEO-Optimizer</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-12">
+                Boost your website's visibility with our powerful SEO optimization tools. Get higher rankings and more organic traffic today!
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+                <a href="/article" class="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
+                    SEO-Optimizer
+                </a>
+                <a href="/exif-editor" class="px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
+                    EXIF Editor
+                </a>
             </div>
-        {% endif %}
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="SEO Optimization Dashboard" class="w-full h-auto">
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>© 2023 SEO-Optimizer. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Mobile menu (hidden by default) -->
+    <div class="md:hidden fixed inset-0 bg-gray-900 bg-opacity-90 z-50 hidden" id="mobileMenu">
+        <div class="flex flex-col items-center justify-center h-full space-y-8">
+            <a href="/article" class="text-2xl text-white hover:text-yellow-300 font-bold">SEO-Optimizer</a>
+            <a href="/exif-editor" class="text-2xl text-white hover:text-yellow-300 font-bold">EXIF Editor</a>
+            <button class="absolute top-6 right-6 text-white" id="closeMenu">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <script>
-        function toggleField(fieldId, show) {
-            document.getElementById(fieldId).classList.toggle('hidden', !show);
-        }
+        // Mobile menu toggle
+        document.querySelector('header button').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.remove('hidden');
+        });
+        
+        document.getElementById('closeMenu').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.add('hidden');
+        });
     </script>
 </body>
 </html>

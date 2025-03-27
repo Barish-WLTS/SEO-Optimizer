@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXIF Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #6B46C1 0%, #4299E1 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 font-sans">
+    <!-- Navigation Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold">EXIF<span class="text-yellow-300">Editor</span></div>
+            <div class="hidden md:flex space-x-8">
+                <a href="/" class="text-white hover:text-yellow-300 font-semibold transition duration-300 hover:scale-105">Home</a>
+                <a href="/article" class="text-white hover:text-yellow-300 font-semibold transition duration-300 hover:scale-105">SEO-Optimizer</a>
+            </div>
+            <button class="md:hidden focus:outline-none" id="mobileMenuButton">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="md:hidden fixed inset-0 bg-gray-900 bg-opacity-90 z-50 hidden" id="mobileMenu">
+        <div class="flex flex-col items-center justify-center h-full space-y-8">
+            <a href="/" class="text-2xl text-white hover:text-yellow-300 font-bold">Home</a>
+            <a href="/article" class="text-2xl text-white hover:text-yellow-300 font-bold">SEO-Optimizer</a>
+            <button class="absolute top-6 right-6 text-white" id="closeMenu">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">EXIF Editor</h1>
+
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Editor Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md flex-1">
+                <h2 class="text-2xl font-semibold mb-4">Edit Metadata</h2>
+
+                {% if selected_file %}
+                <p class="mb-4">Currently selected: <strong>{{ selected_file.filename }}</strong></p>
+
+                {% if selected_file_data %}
+                <img src="data:image/jpeg;base64,{{ base64.b64encode(selected_file_data).decode('utf-8') }}"
+                    class="max-w-full h-auto border border-gray-200 rounded mb-4" style="max-height: 200px;">
+                {% endif %}
+
+                <form method="post" class="space-y-4">
+                    <div>
+                        <label class="block font-medium mb-1">New Filename:</label>
+                        <input type="text" name="new_filename" value="{{ selected_file.filename }}" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium mb-1">Keywords (comma-separated):</label>
+                        <input type="text" name="keywords" value="{{ exif_data.get('Keywords', '') }}" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium mb-1">Description:</label>
+                        <input type="text" name="description" value="{{ exif_data.get('Title', '') }}" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium mb-1">GPS Latitude:</label>
+                        <input type="number" step="any" name="latitude" value="{{ exif_data.get('GPSLatitude', 0) }}" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium mb-1">GPS Longitude:</label>
+                        <input type="number" step="any" name="longitude" value="{{ exif_data.get('GPSLongitude', 0) }}" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 outline-none">
+                    </div>
+
+                    <button type="submit" name="write_exif" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition duration-300">
+                        Write EXIF Tags
+                    </button>
+                </form>
+
+                <a href="{{ url_for('download_file', file_hash=selected_file.hash) }}" 
+                   class="inline-block mt-6 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition duration-300">
+                    Download Updated File
+                </a>
+                {% else %}
+                <p class="text-gray-600">Select a file from the gallery to edit its metadata.</p>
+                {% endif %}
+            </div>
+
+            <!-- Gallery Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md flex-1">
+                <h2 class="text-2xl font-semibold mb-4">File Gallery</h2>
+
+                <form method="post" enctype="multipart/form-data" class="mb-4">
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="file" name="upload_files" multiple accept="image/*" 
+                               class="px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-400 outline-none">
+                        <button type="submit" 
+                                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition duration-300">
+                            Upload
+                        </button>
+                    </div>
+                </form>
+
+                <form method="post" class="mb-6">
+                    <button type="submit" name="clear_gallery" 
+                            class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded transition duration-300">
+                        Clear Gallery
+                    </button>
+                </form>
+
+                <div class="space-y-4">
+                    {% for file in current_files %}
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center p-4 border border-gray-200 rounded-lg {% if selected_file and file.hash == selected_file.hash %}bg-blue-50 border-blue-300{% else %}bg-white{% endif %}">
+                        {% if file.is_image %}
+                        <img src="{{ url_for('get_thumbnail', file_hash=file.hash) }}" 
+                             class="w-24 h-18 object-cover border border-gray-200 rounded mb-2 sm:mb-0 sm:mr-4">
+                        {% else %}
+                        <div class="w-24 h-18 bg-gray-100 border border-gray-200 rounded flex items-center justify-center mb-2 sm:mb-0 sm:mr-4">
+                            [Document]
+                        </div>
+                        {% endif %}
+
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium truncate">{{ file.filename }}</p>
+                            <p class="text-sm text-gray-500">{{ (file.size / 1024)|round(1) }} KB</p>
+                        </div>
+
+                        <form method="post" class="mt-2 sm:mt-0">
+                            <input type="hidden" name="select_file" value="{{ file.hash }}">
+                            <button type="submit" 
+                                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded text-sm transition duration-300">
+                                Select
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuButton').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.remove('hidden');
+        });
+        
+        document.getElementById('closeMenu').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>

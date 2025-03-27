@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Article Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #6B46C1 0%, #4299E1 100%);
+        }
+        .article-container h1 { /* Replace .article-container */
+  font-size: 2em;  /* Adjust size as needed */
+  font-weight: bold;
+  margin-bottom: 0.5em; /* Space after h1 */
+}
+
+.article-container h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.article-container p {
+  margin-bottom: 1em; /* Space between paragraphs */
+  line-height: 1.5; /* Add line-height for readability */
+}
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Navigation -->
+    <header class="gradient-bg text-white shadow-lg">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold">SEO<span class="text-yellow-300">ArticleGen</span></div>
+            <div class="hidden md:flex space-x-8">
+                <a href="/" class="text-white hover:text-yellow-300 font-semibold transition duration-300 transform hover:scale-105">Home</a>
+                <a href="/exif-editor" class="text-white hover:text-yellow-300 font-semibold transition duration-300 transform hover:scale-105">EXIF Editor</a>
+            </div>
+            <button class="md:hidden focus:outline-none" id="mobileMenuButton">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 sm:px-6 py-8">
+        <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="p-6 sm:p-8">
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">SEO Article Generator</h2>
+                
+                <form method="POST" class="flex flex-col gap-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="font-semibold block mb-2">Word Count:</label>
+                            <select name="word_count" class="w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none">
+                                {% for count in [300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200] %}
+                                    <option value="{{ count }}">{{ count }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="font-semibold block mb-2">Dialect:</label>
+                            <select name="dialect" class="w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none">
+                                {% for dialect in ["American", "British", "Canadian", "Australian"] %}
+                                    <option value="{{ dialect }}">{{ dialect }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="font-semibold block mb-2">Topic:</label>
+                        <input type="text" name="topic" required class="w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="font-semibold block mb-2">Keywords and URLs:</label>
+                        <textarea name="keywords_text" rows="5" required class="w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+                    </div>
+
+                    <!-- Add Context -->
+                    <div>
+                        <label class="font-semibold block mb-2">Add Context:</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="add_context" value="Yes" onclick="toggleField('contextField', true)" class="w-5 h-5 text-blue-500">
+                                Yes
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="add_context" value="No" onclick="toggleField('contextField', false)" class="w-5 h-5 text-blue-500" checked>
+                                No
+                            </label>
+                        </div>
+
+                        <div id="contextField" class="hidden mt-3">
+                            <textarea name="context" rows="5" class="w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Remove Keywords -->
+                    <div>
+                        <label class="font-semibold block mb-2">Remove Keywords:</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="remove_keywords" value="Yes" onclick="toggleField('removeKeywordsField', true)" class="w-5 h-5 text-blue-500">
+                                Yes
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="remove_keywords" value="No" onclick="toggleField('removeKeywordsField', false)" class="w-5 h-5 text-blue-500" checked>
+                                No
+                            </label>
+                        </div>
+
+                        <div id="removeKeywordsField" class="hidden mt-3">
+                            <textarea name="remove_keywords_text" rows="5" class="w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Add Bulletpoints -->
+                    <div>
+                        <label class="font-semibold block mb-2">Add Bulletpoints:</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="bulletpoints" value="Yes" onclick="toggleField('bulletpointsField', true)" class="w-5 h-5 text-blue-500">
+                                Yes
+                            </label>
+                            <label class="flex items-center gap-2">
+                                <input type="radio" name="bulletpoints" value="No" onclick="toggleField('bulletpointsField', false)" class="w-5 h-5 text-blue-500" checked>
+                                No
+                            </label>
+                        </div>
+
+                        <div id="bulletpointsField" class="hidden mt-3">
+                            <textarea name="bulletpoints_text" rows="5" class="w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-400 outline-none"></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-md transition transform hover:scale-105 mt-4">
+                        Generate Article
+                    </button>
+                </form>
+
+                {% if error_message %}
+                    <p class="text-red-500 mt-6 p-3 bg-red-100 border border-red-300 rounded-md">{{ error_message }}</p>
+                {% endif %}
+
+                {% if sections %}
+    <div class="mt-8 p-6 border border-gray-200 rounded-md bg-gray-50 shadow-inner">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Generated Article:</h3>
+        <div class="article-container">
+            {% if sections %}
+                {% for section in sections %}
+                    <div class="article-section">
+                        <h2>{{ section.title }}</h2>
+                        <div class="article-content">
+                            {% if section.html %}
+                                {{ section.content|safe }}
+                            {% else %}
+                                <p>{{ section.content }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Menu -->
+    <div class="md:hidden fixed inset-0 bg-gray-900 bg-opacity-90 z-50 hidden" id="mobileMenu">
+        <div class="flex flex-col items-center justify-center h-full space-y-8">
+            <a href="/" class="text-2xl text-white hover:text-yellow-300 font-bold">Home</a>
+            <a href="/exif-editor" class="text-2xl text-white hover:text-yellow-300 font-bold">EXIF Editor</a>
+            <button class="absolute top-6 right-6 text-white" id="closeMenu">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuButton').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.remove('hidden');
+        });
+        
+        document.getElementById('closeMenu').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.add('hidden');
+        });
+
+        function toggleField(fieldId, show) {
+            document.getElementById(fieldId).classList.toggle('hidden', !show);
+        }
+    </script>
+</body>
+</html>
