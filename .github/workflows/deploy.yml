@@ -1,0 +1,49 @@
+name: Python Flask CI/CD to AWS EC2
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12.3'  # Match your EC2 Python version
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run tests
+      run: |
+        pytest  # Add your test command if applicable
+        
+    - name: Deploy to EC2
+      if: github.ref == 'refs/heads/master'
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.EC2_IP }}
+        username: ubuntu  # Or your EC2 username
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /home/ubuntu/SEO-Optimizer
+          sudo su -c "git pull origin master" ubuntu
+          
+          # Kill existing process on port 5000
+          sudo lsof -i :5000 | awk 'NR!=1 {print $2}' | sudo xargs kill -9 || true
+          
+          # Activate venv and restart Flask
+          source venv/bin/activate
+          pip install -r requirements.txt
+          nohup python3 -m flask run --host=0.0.0.0 --port=5000 > flask.log 2>&1 &
+          disown
