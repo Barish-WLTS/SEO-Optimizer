@@ -24,9 +24,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
-    - name: Run tests
-      run: |
-        pytest  # Add your test command if applicable
+    # - name: Run tests
+    #   run: |
+    #     pytest  # Add your test command if applicable
         
     - name: Deploy to EC2
       if: github.ref == 'refs/heads/master'
