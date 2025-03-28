@@ -37,16 +37,23 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /home/ubuntu/SEO-Optimizer
-          sudo git config --global --add safe.directory /home/ubuntu/SEO-Optimizer
+          # Fix Git safety check
+          git config --global --add safe.directory /home/ubuntu/SEO-Optimizer
           git pull origin master
           
-          # Clean restart
-          sudo pkill -f flask || true
-          source venv/bin/activate
-          pip install --force-reinstall -r requirements.txt
+          # Ensure proper permissions
           sudo chown -R ubuntu:ubuntu /home/ubuntu/SEO-Optimizer
           
-          # Run with PM2 (or nohup)
+          # Activate venv and install dependencies
+          source venv/bin/activate
+          pip install --force-reinstall -r requirements.txt
+          
+          # Stop any existing PM2 process
           pm2 delete flask-app || true
-          pm2 start "python3 -m flask run --host=0.0.0.0 --port=5000" --name flask-app
+          
+          # Start Flask with PM2 using the virtualenv python
+          pm2 start venv/bin/python --name flask-app -- -m flask run --host=0.0.0.0 --port=5000
+          
+          # Save and setup startup script
           pm2 save
+          pm2 startup 2>&1 | grep "sudo" | bash
