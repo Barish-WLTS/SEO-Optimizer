@@ -33,17 +33,20 @@ jobs:
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.EC2_IP }}
-        username: ubuntu  # Or your EC2 username
+        username: ubuntu
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /home/ubuntu/SEO-Optimizer
-          sudo su -c "git pull origin master" ubuntu
+          # Fix git ownership
+          sudo git config --global --add safe.directory /home/ubuntu/SEO-Optimizer
+          git pull origin master
           
-          # Kill existing process on port 5000
+          # Kill existing process
           sudo lsof -i :5000 | awk 'NR!=1 {print $2}' | sudo xargs kill -9 || true
           
-          # Activate venv and restart Flask
+          # Restart Flask with proper permissions
           source venv/bin/activate
           pip install -r requirements.txt
-          nohup python3 -m flask run --host=0.0.0.0 --port=5000 > flask.log 2>&1 &
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/SEO-Optimizer
+          nohup python3 -m flask run --host=0.0.0.0 --port=5000 > /tmp/flask.log 2>&1 &
           disown
