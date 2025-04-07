@@ -438,10 +438,10 @@ def generate_prompt(word_count, dialect, topic, keywords_links, add_context, con
 
     keywords_section = f"Naturally integrate the following keywords only once, each hyperlinked to their respective URLs:\n\n{keywords_formatted}\n" if not remove_keywords else ""
 
-    base_prompt = f"""{context_part}Research and compose a {word_count}-word article in SEO format with subheadings on the topic of "{topic}". Write in {dialect} English. {instruction}
+    base_prompt = f"""{context_part}Research and compose a {word_count}-word article in SEO format with subheadings on the topic of "{topic}". Write in {dialect} English.
 {keywords_section}
 
-Structure the article with a compelling introduction, a well-developed body, and a concise conclusion. Use varied sentence structures and a diverse vocabulary to maintain reader interest and convey information effectively."""
+Structure the article with a compelling introduction, a well-developed body, and a concise conclusion. Use varied sentence structures and a diverse vocabulary to maintain reader interest and convey information effectively. {instruction}"""
 
     return base_prompt.strip()
 
@@ -510,7 +510,6 @@ def index():
             "context") if add_context_option else ""
         remove_keywords = request.form.get("remove_keywords") == "Yes"
         bulletpoints = request.form.get("bulletpoints") == "Yes"
-
         if not gemini_api_key:
             error_message = "Please enter your Gemini API Key."
         elif not topic.strip():
